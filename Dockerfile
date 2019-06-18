@@ -2,9 +2,16 @@ FROM python:3
 
 WORKDIR /flask_test
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# We copy just the requirements.txt first to leverage Docker cache
+COPY ./requirements.txt /app/requirements.txt
 
-CMD [ "python", "./test.py" ]
+WORKDIR /app
+
+RUN pip install -r requirements.txt
+
+COPY . /app
+
+ENTRYPOINT [ "python" ]
+
+CMD [ "test.py" ]
